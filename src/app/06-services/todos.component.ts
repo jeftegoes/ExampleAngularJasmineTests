@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { TodoService } from './todo.service';
+import { TodosService } from './todos.service';
 
 @Component({
   template: '',
@@ -8,21 +8,21 @@ export class TodosComponent {
   todos: any[] = [];
   message: string = '';
 
-  constructor(private todoService: TodoService) {}
+  constructor(private todosService: TodosService) {}
 
   ngOnInit() {
-    this.todoService.getTodos().subscribe((t) => (this.todos = t));
+    this.todosService.getTodos().subscribe((t) => (this.todos = t));
   }
 
   add() {
     let newTodo = { title: '' };
-    this.todoService.add(newTodo).subscribe(
+    this.todosService.add(newTodo).subscribe(
       (t) => this.todos.push(t),
       (err) => (this.message = err)
     );
   }
 
   delete(id: number) {
-    if (confirm('Are you sure?')) this.todoService.delete(id).subscribe();
+    if (confirm('Are you sure?')) this.todosService.delete(id).subscribe();
   }
 }

@@ -1,9 +1,10 @@
-/*import { HttpClient } from '@angular/common/http';
-import { from, throwError, empty } from 'rxjs';
-import { TodosComponent } from './todo.component';
-import { TodoService } from './todo.service';
+/*import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { from, of, throwError, empty } from 'rxjs';
+import { TodosComponent } from './todos.component';
+import { TodosService } from './todos.service';
 
 import { Component, Injector } from '@angular/core';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 export let InjectorInstance: Injector;
 
@@ -15,20 +16,25 @@ export class AppModule {
 
 describe('TodoComponent', () => {
   let todosComponent: TodosComponent;
-  let todoService: TodoService;
-  let httpClient: HttpClient;
+  let todosService: TodosService;
+  let fixture: ComponentFixture<TodosComponent>;
 
-  beforeEach(() => {
-    httpClient = InjectorInstance.get<HttpClient>(HttpClient);
-    todoService = new TodoService(httpClient);
-    todosComponent = new TodosComponent(todoService);
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [HttpClientModule],
+      declarations: [TodosComponent],
+      providers: [TodosService],
+    });
+
+    fixture = TestBed.createComponent(TodosComponent);
+    todosComponent = fixture.componentInstance;
   });
 
   it('should set todos property with the items returned from the server', () => {
     let todos: any[] = [1, 2, 3];
 
-    spyOn(todoService, 'getTodos').and.callFake(() => {
-      return from([todos]);
+    spyOn(todosService, 'getTodos').and.callFake(() => {
+      return of([todos]);
     });
 
     todosComponent.ngOnInit();
@@ -37,7 +43,7 @@ describe('TodoComponent', () => {
   });
 
   it('should call the server to sabe the changes when a new todo item is added', () => {
-    let spy = spyOn(todoService, 'add').and.callFake((t) => {
+    let spy = spyOn(todosService, 'add').and.callFake((t) => {
       return empty();
     });
 
@@ -48,7 +54,7 @@ describe('TodoComponent', () => {
 
   it('should add the new todo returned from the server', () => {
     let todo = { id: 1 };
-    let spy = spyOn(todoService, 'add').and.returnValue(from([todo]));
+    let spy = spyOn(todosService, 'add').and.returnValue(from([todo]));
 
     todosComponent.add();
 
@@ -57,7 +63,7 @@ describe('TodoComponent', () => {
 
   it('should set the message property if server returns an error when adding a new todo', () => {
     let error = 'error from the server';
-    let spy = spyOn(todoService, 'add').and.returnValue(throwError(error));
+    let spy = spyOn(todosService, 'add').and.returnValue(throwError(error));
 
     todosComponent.add();
 
@@ -66,7 +72,7 @@ describe('TodoComponent', () => {
 
   it('should call the server to delete a todo item if the user confirms', () => {
     spyOn(window, 'confirm').and.returnValue(true);
-    let spy = spyOn(todoService, 'delete').and.returnValue(empty());
+    let spy = spyOn(todosService, 'delete').and.returnValue(empty());
 
     todosComponent.delete(1);
 
@@ -75,7 +81,7 @@ describe('TodoComponent', () => {
 
   it('should NOT call the server to delete a todo item if the user cancels', () => {
     spyOn(window, 'confirm').and.returnValue(false);
-    let spy = spyOn(todoService, 'delete').and.returnValue(empty());
+    let spy = spyOn(todosService, 'delete').and.returnValue(empty());
 
     todosComponent.delete(1);
 

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 
-export class TodoService {
+export class TodosService {
   constructor(private httpClient: HttpClient) {}
 
   getTodos() {
